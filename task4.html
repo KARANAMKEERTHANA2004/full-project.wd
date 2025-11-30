@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BrightLine Digital — Enhanced Demo (Responsive, Quiz, Carousel, API, Portfolio & Apps)</title>
+
+  <style>
+    /* ---------- Variables ---------- */
+    :root{
+      --bg-start: #E9F6F4;
+      --bg-end: #F4FBF9;
+      --card: #ffffff;
+      --accent: #0B7A72;
+      --accent-2: #0F5960;
+      --muted: #556076;
+      --danger: #d75b5b;
+      --radius: 12px;
+      --max-width: 1200px;
+      --flow: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,var(--bg-start) 0%,var(--bg-end) 60%);color:#07121a;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:var(--max-width);margin:24px auto;padding:20px;display:flex;flex-direction:column;gap:18px}
+
+    /* ---------- Header ---------- */
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#10b981,#0891b2);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px;box-shadow:0 8px 20px rgba(3,104,102,0.12)}
+    nav ul{display:flex;gap:14px;list-style:none;padding:0;margin:0}
+    nav a{color:var(--accent-2);text-decoration:none;font-weight:600;cursor:pointer}
+    .cta{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+
+    /* ---------- Hero ---------- */
+    .hero{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+    .hero-left h1{margin:0;font-size:2rem;color:var(--accent)}
+    .lead{color:var(--muted);margin-top:8px;font-size:1rem}
+    .hero-card{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:0 12px 30px rgba(10,20,30,0.06)}
+
+    /* ---------- Sections ---------- */
+    .section{margin:20px 0;display:flex;flex-direction:column;gap:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .service{background:linear-gradient(180deg,#fff,#fbfeff);padding:14px;border-radius:10px;border:1px solid rgba(11,122,114,0.06)}
+    .price-card{flex:1;background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(11,122,114,0.06)}
+    .testimony{background:#fff;border-radius:10px;padding:12px;border:1px solid rgba(11,122,114,0.05)}
+
+    /* ---------- Contact & Planner ---------- */
+    .contact-grid{display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start}
+    form label{display:block;font-weight:700;margin-bottom:6px;color:#064a46}
+    input, textarea, select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,122,114,0.12);font-size:14px}
+    textarea{min-height:100px;resize:vertical}
+    .form-actions{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    .inline-message{display:none;margin-top:12px;padding:12px;background:#DFF7F2;border-left:4px solid var(--accent-2);border-radius:8px;color:#0b544f}
+    .inline-error{display:none;margin-top:12px;padding:12px;background:#FFEFEF;border-left:4px solid var(--danger);border-radius:8px;color:#7a2b2b}
+
+    /* ---------- Planner (To-Do) ---------- */
+    .planner{background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(11,122,114,0.06)}
+    .todo-input{display:flex;gap:8px}
+    .todo-input input{flex:1}
+    .todo-list{margin-top:12px;list-style:none;padding:0}
+    .todo-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;border:1px solid rgba(11,122,114,0.04);margin-bottom:8px;background:#fbfffe}
+    .todo-item.done{opacity:0.6;text-decoration:line-through}
+    .todo-actions button{background:transparent;border:none;cursor:pointer;color:var(--accent-2);font-weight:700;padding:6px;border-radius:6px}
+    .todo-actions button.remove{color:var(--danger)}
+
+    /* ---------- Quiz ---------- */
+    .quiz{background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(11,122,114,0.06)}
+    .question{margin-bottom:10px}
+    .choices{list-style:none;padding:0;margin:10px 0}
+    .choices li{margin:6px 0}
+    .result-box{display:none;margin-top:12px;padding:12px;border-radius:8px;background:#DFF7F2;border-left:4px solid var(--accent-2);color:#0b544f}
+
+    /* ---------- Carousel ---------- */
+    .carousel{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(11,122,114,0.06);display:flex;flex-direction:column;gap:12px}
+    .slides{position:relative;overflow:hidden;border-radius:8px;height:180px}
+    .slide{position:absolute;inset:0;display:grid;place-items:center;font-size:1.25rem;color:white;font-weight:700;transition:transform .4s ease,opacity .4s ease;opacity:0;transform:translateX(20px);padding:18px}
+    .slide.active{opacity:1;transform:translateX(0)}
+    .slide.s1{background:linear-gradient(135deg,#0891b2,#10b981)}
+    .slide.s2{background:linear-gradient(135deg,#0f5960,#10b981)}
+    .slide.s3{background:linear-gradient(135deg,#0b5160,#0891b2)}
+    .carousel-controls{display:flex;justify-content:space-between;align-items:center}
+    .carousel-controls button{padding:8px 12px;border-radius:8px;border:1px solid rgba(11,122,114,0.12);background:#fff;cursor:pointer}
+
+    /* ---------- API display ---------- */
+    .api-box{background:#fff;border-radius:8px;padding:12px;border:1px solid rgba(11,122,114,0.06)}
+    .api-actions{display:flex;gap:8px}
+
+    /* ---------- Portfolio / Projects (Task4) ---------- */
+    .portfolio{display:flex;gap:18px;flex-wrap:wrap}
+    .about-box, .projects-box, .project-detail{background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(11,122,114,0.06)}
+    .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media (max-width:760px){ .projects-grid{grid-template-columns:1fr} }
+
+    /* ---------- Products (Task4) ---------- */
+    .products, .product-filters{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(11,122,114,0.06)}
+    .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:980px){ .products-grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:640px){ .products-grid{grid-template-columns:1fr} }
+    .product{padding:10px;border-radius:8px;border:1px solid rgba(11,122,114,0.06);background:#fff;display:flex;flex-direction:column;gap:8px}
+    .prod-meta{font-size:0.9rem;color:var(--muted)}
+
+    /* ---------- Utilities ---------- */
+    .small{font-size:0.9rem;color:var(--muted)}
+    .btn{display:inline-block;background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;margin-right:8px}
+    .btn.ghost{background:#fff;color:var(--accent);border:1px solid rgba(11,122,114,0.12)}
+    .btn.warn{background:#fff;border:1px solid rgba(215,91,91,0.12);color:var(--danger)}
+    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:0.95rem}
+
+    /* ---------- Responsive / Media Queries (Advanced Styling) ---------- */
+    @media (max-width:1100px){
+      .hero{grid-template-columns:1fr}
+      .contact-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:760px){
+      :root{--flow:14px}
+      .hero-left h1{font-size:1.45rem}
+      nav ul{display:none}
+      .slides{height:160px}
+      .slide{font-size:1rem}
+    }
+    @media (min-width:1400px){
+      .hero-left h1{font-size:2.4rem}
+      :root{--flow:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="pageRoot">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">BL</div>
+        <div>
+          <div style="font-weight:700;color:#053f3b">BrightLine Digital</div>
+          <div class="small">Demo — responsive + DOM interactivity + portfolio & apps</div>
+        </div>
+      </div>
+
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a data-scroll="services">Services</a></li>
+          <li><a data-scroll="pricing">Pricing</a></li>
+          <li><a data-scroll="quiz">Quiz</a></li>
+          <li><a data-scroll="carousel">Carousel</a></li>
+          <li><a data-scroll="portfolio">Portfolio</a></li>
+          <li><a data-scroll="products">Products</a></li>
+          <li><a data-scroll="contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button class="cta" id="getQuoteBtn">Get a Quote</button>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Hero Section">
+      <div class="hero-left">
+        <h1>Grow your online business with clarity — responsive, interactive, and complete</h1>
+        <p class="lead">This demo now includes Task 1→4: contact form, validation, responsive features, quiz, carousel, API fetch, portfolio, to-do & notes with localStorage, and a product listing with filter & sort.</p>
+
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="cta" id="startBtn">Start Project</button>
+          <button class="cta ghost" id="learnMore">Learn More</button>
+        </div>
+
+        <div style="margin-top:18px" class="hero-card">
+          <strong>Advanced styling</strong>
+          <p class="small" style="margin-top:8px;color:var(--muted)">Media queries adjust layout & sizes; all interactions appear inline (no alert popups).</p>
+        </div>
+      </div>
+
+      <aside class="hero-right hero-card" aria-label="Quick contact">
+        <strong>Quick Contact</strong>
+        <p class="small" style="margin-top:6px;color:var(--muted)">Enter details and we’ll reply within 48 hours (simulated locally).</p>
+
+        <form id="quickForm" style="margin-top:10px" autocomplete="off">
+          <label for="qname">Name</label>
+          <input id="qname" name="qname" type="text" placeholder="Your name">
+
+          <label for="qemail" style="margin-top:8px">Email</label>
+          <input id="qemail" name="qemail" type="text" placeholder="you@example.com">
+
+          <div class="form-actions">
+            <button type="submit" class="btn">Send</button>
+            <button type="button" id="clearQuick" class="btn ghost">Clear</button>
+          </div>
+
+          <div id="quickMsg" class="inline-message" role="status" aria-live="polite"></div>
+        </form>
+      </aside>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="section" aria-label="Services">
+      <h2 style="margin:0 0 12px 0;color:var(--accent-2)">Our Services</h2>
+      <div class="grid-3">
+        <div class="service"><h3>Website Design</h3><p class="small">Fast, responsive, accessible design.</p></div>
+        <div class="service"><h3>eCommerce Stores</h3><p class="small">Shop setup, payments, product pages.</p></div>
+        <div class="service"><h3>Growth Marketing</h3><p class="small">Email flows, funnels, ad creatives.</p></div>
+      </div>
+    </section>
+
+    <!-- Quiz & Carousel Row -->
+    <section class="section" style="display:grid;grid-template-columns:1fr 420px;gap:18px">
+      <!-- Interactive Quiz -->
+      <div id="quiz" class="quiz" aria-labelledby="quiz-title">
+        <h3 id="quiz-title" style="margin-top:0">Interactive Quiz — Web Basics</h3>
+        <div id="quizArea"></div>
+        <div style="margin-top:10px">
+          <button id="submitQuiz" class="btn">Submit Quiz</button>
+          <button id="resetQuiz" class="btn ghost">Reset</button>
+        </div>
+        <div id="quizResult" class="result-box" role="status" aria-live="polite"></div>
+      </div>
+
+      <!-- Image Carousel -->
+      <div id="carousel" class="carousel" aria-labelledby="carousel-title">
+        <h3 id="carousel-title" style="margin:0">Image Carousel (placeholder slides)</h3>
+        <div class="slides" id="slides" tabindex="0" aria-live="polite" aria-roledescription="carousel">
+          <div class="slide s1 active" data-index="0" role="group" aria-roledescription="slide" aria-label="Slide 1">Website Strategy</div>
+          <div class="slide s2" data-index="1" role="group" aria-roledescription="slide" aria-label="Slide 2">Design & UI</div>
+          <div class="slide s3" data-index="2" role="group" aria-roledescription="slide" aria-label="Slide 3">Marketing Growth</div>
+        </div>
+
+        <div class="carousel-controls">
+          <div>
+            <button id="prevSlide" class="btn ghost" aria-label="Previous slide">&larr; Prev</button>
+            <button id="nextSlide" class="btn ghost" aria-label="Next slide">Next &rarr;</button>
+          </div>
+          <div>
+            <span class="small">Auto-rotate</span>
+            <button id="toggleAuto" class="btn ghost" aria-pressed="false" title="Toggle auto-rotate">Start</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio (Task 4) -->
+    <section id="portfolio" class="section" aria-label="Portfolio">
+      <h2 style="margin:0 0 12px 0;color:var(--accent-2)">Portfolio</h2>
+      <div class="portfolio">
+        <div class="about-box" style="flex:1;min-width:260px">
+          <h3>About</h3>
+          <p class="small">I'm a front-end developer who builds responsive sites and small interactive apps using HTML, CSS, and vanilla JavaScript. This portfolio demo showcases projects, notes, and tools built with localStorage and DOM manipulation.</p>
+        </div>
+
+        <div class="projects-box" style="flex:2;min-width:320px">
+          <h3>Projects</h3>
+          <div class="projects-grid" id="projectsGrid"></div>
+          <div id="projectDetail" class="project-detail" style="display:none;margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products (Task 4) -->
+    <section id="products" class="section" aria-label="Products">
+      <h2 style="margin:0 0 12px 0;color:var(--accent-2)">Product Listing (Filtering & Sorting)</h2>
+      <div style="display:grid;grid-template-columns:260px 1fr;gap:12px">
+        <aside class="product-filters">
+          <h3 style="margin-top:0">Filters & Sort</h3>
+          <label>Category</label>
+          <select id="filterCategory"><option value="">All</option></select>
+
+          <label style="margin-top:8px">Max price (₹)</label>
+          <input id="filterPrice" type="number" placeholder="e.g., 1000" min="0">
+
+          <label style="margin-top:8px">Sort by</label>
+          <select id="sortBy">
+            <option value="none">None</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="rating-desc">Rating: High → Low</option>
+          </select>
+
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button class="btn" id="applyFilters">Apply</button>
+            <button class="btn ghost" id="clearFilters">Clear</button>
+          </div>
+        </aside>
+
+        <div>
+          <div class="products" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+            <h3 style="margin:0">Products</h3>
+            <div class="small" id="productsCount">0 items</div>
+          </div>
+
+          <div class="products-grid" id="productsGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API Fetch demo + Pricing -->
+    <section class="section">
+      <div style="display:flex;gap:18px;flex-wrap:wrap">
+        <div style="flex:1;min-width:280px" class="api-box" aria-labelledby="api-title">
+          <h3 id="api-title" style="margin-top:0">Fetch a Joke (public API)</h3>
+          <p class="small">This demonstrates fetching from a public API and showing data inline.</p>
+          <div class="api-actions" style="margin-top:8px">
+            <button id="getJoke" class="btn">Get a random joke</button>
+            <button id="clearJoke" class="btn ghost">Clear</button>
+          </div>
+          <div id="jokeArea" style="margin-top:12px;color:var(--muted)">No joke yet.</div>
+        </div>
+
+        <div style="flex:1;min-width:280px">
+          <h3 style="margin-top:0;color:var(--accent-2)">Pricing Snapshot</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="price-card"><h4>Starter</h4><p class="small">₹15,000</p></div>
+            <div class="price-card"><h4>Business</h4><p class="small">₹35,000</p></div>
+            <div class="price-card"><h4>Growth</h4><p class="small">Custom</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact + Planner -->
+    <section id="contact" class="section" aria-label="Contact and planner">
+      <h2 style="margin:0 0 12px 0;color:var(--accent-2)">Contact & Project Planner</h2>
+
+      <div class="contact-grid">
+        <!-- Contact Form (with validation) -->
+        <div class="hero-card" aria-labelledby="contact-form-title">
+          <h3 id="contact-form-title" style="margin-top:0">Submit a Project Request</h3>
+          <form id="contactForm" autocomplete="off" novalidate>
+            <label for="name">Full name</label>
+            <input id="name" name="name" type="text" placeholder="Asha Kumar" required>
+
+            <label for="email" style="margin-top:10px">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required>
+
+            <label for="project" style="margin-top:10px">Project brief</label>
+            <textarea id="project" name="project" placeholder="Describe your project"></textarea>
+
+            <label for="budget" style="margin-top:10px">Estimated budget</label>
+            <select id="budget" name="budget">
+              <option value="">Select</option>
+              <option>Under ₹20,000</option>
+              <option>₹20,000 – ₹50,000</option>
+              <option>₹50,000 – ₹1,00,000</option>
+              <option>₹1,00,000+</option>
+            </select>
+
+            <div class="form-actions">
+              <button type="submit" class="btn">Submit Request</button>
+              <button type="button" id="resetContact" class="btn ghost">Reset</button>
+            </div>
+
+            <div id="contactSuccess" class="inline-message" role="status" aria-live="polite"></div>
+            <div id="contactError" class="inline-error" role="status" aria-live="polite"></div>
+          </form>
+
+          <div class="submissions" id="submissionsList" aria-live="polite" style="margin-top:12px"></div>
+        </div>
+
+        <!-- Planner (To-Do & Notes) -->
+        <aside style="width:380px">
+          <div class="planner" aria-labelledby="planner-title">
+            <h3 id="planner-title" style="margin-top:0">Project Planner (Dynamic To-Do)</h3>
+            <p class="small" style="color:var(--muted)">Add tasks; toggle done; remove; persists locally.</p>
+
+            <div class="todo-input" style="margin-top:10px">
+              <input id="taskInput" type="text" placeholder="Add a new task (e.g., Draft wireframes)" aria-label="New task">
+              <button id="addTaskBtn" class="btn" type="button">Add</button>
+            </div>
+
+            <ul id="todoList" class="todo-list" aria-live="polite" style="margin-top:12px"></ul>
+
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+              <button id="clearCompleted" class="btn ghost">Clear completed</button>
+              <button id="clearAll" class="btn warn">Clear all</button>
+            </div>
+
+            <div id="plannerMsg" class="inline-message" style="display:none;margin-top:12px" role="status" aria-live="polite"></div>
+          </div>
+
+          <div class="planner" style="margin-top:12px">
+            <h3 style="margin-top:0">Notes (LocalStorage)</h3>
+            <label for="noteTitle" class="small">Title</label>
+            <input id="noteTitle" placeholder="Note title" style="width:100%;padding:8px;border-radius:6px;border:1px solid rgba(11,122,114,0.12)">
+
+            <label for="noteBody" class="small" style="margin-top:8px">Note</label>
+            <textarea id="noteBody" placeholder="Write your note..." rows="4" style="width:100%;padding:8px;border-radius:6px;border:1px solid rgba(11,122,114,0.12)"></textarea>
+
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button id="saveNote" class="btn">Save Note</button>
+              <button id="clearNote" class="btn ghost">Clear</button>
+            </div>
+
+            <ul id="notesList" class="note-list" style="margin-top:12px"></ul>
+            <div id="noteMsg" class="inline-message" style="display:none;margin-top:12px" role="status" aria-live="polite"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <footer>© BrightLine Digital — Demo with Tasks 1–4 integrated (all storage local to browser)</footer>
+  </div>
+
+  <script>
+    (function () {
+      /* ---------- Helpers ---------- */
+      function $(sel, ctx=document) { return ctx.querySelector(sel); }
+      function $all(sel, ctx=document) { return Array.from(ctx.querySelectorAll(sel)); }
+      function showInline(el, text, ms=4000) { el.style.display = 'block'; el.textContent = text; if (ms) setTimeout(()=>{ el.style.display='none'; }, ms); }
+      function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+      function escapeHtml(str) { return String(str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+      /* ---------- Smooth nav for new nav links ---------- */
+      document.querySelectorAll('[data-scroll]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          const id = a.getAttribute('data-scroll');
+          const el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+      /* ---------- Quick Contact ---------- */
+      const quickForm = $('#quickForm'), quickMsg = $('#quickMsg'), clearQuick = $('#clearQuick');
+      quickForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = $('#qname').value.trim(), email = $('#qemail').value.trim();
+        if (!name || !email) { showInline(quickMsg, 'Please enter name and email.'); return; }
+        if (!validateEmail(email)) { showInline(quickMsg, 'Please enter a valid email.'); return; }
+        showInline(quickMsg, `Thanks, ${escapeHtml(name)}! We received your quick request.`, 3500);
+        quickForm.reset();
+      });
+      clearQuick.addEventListener('click', ()=> quickForm.reset());
+
+      /* ---------- Get Quote CTA ---------- */
+      $('#getQuoteBtn').addEventListener('click', () => {
+        const heroCard = document.querySelector('.hero-card');
+        const temp = document.createElement('div');
+        temp.className = 'inline-message'; temp.style.display='block';
+        temp.textContent = 'Thanks — please use the Contact form below to submit a project request.';
+        heroCard.parentNode.insertBefore(temp, heroCard.nextSibling);
+        setTimeout(()=> temp.remove(), 5000);
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      /* ---------- Contact Form (validation + storage) ---------- */
+      const contactForm = $('#contactForm'), contactSuccess = $('#contactSuccess'), contactError = $('#contactError'), resetContact = $('#resetContact'), submissionsList = $('#submissionsList');
+      const STORAGE_KEY = 'brightline_contacts_v3';
+
+      function loadSubmissions(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch(e){ return []; } }
+      function saveSubmissions(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+      function renderSubmissions(){
+        const list = loadSubmissions();
+        if (!list.length) { submissionsList.innerHTML = '<div class="small" style="color:var(--muted)">No requests yet.</div>'; return; }
+        submissionsList.innerHTML = '';
+        list.slice().reverse().forEach(s => {
+          const div = document.createElement('div'); div.className='sub-item';
+          div.innerHTML = `<strong>${escapeHtml(s.name)}</strong> • <span class="small" style="color:var(--muted)">${escapeHtml(s.email)}</span>
+            <div style="margin-top:6px;color:var(--muted)">${escapeHtml(s.project||'No project details')}</div>
+            <div style="margin-top:8px;font-size:0.85rem;color:var(--muted)">Budget: ${escapeHtml(s.budget||'Not specified')}</div>`;
+          submissionsList.appendChild(div);
+        });
+      }
+
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        contactSuccess.style.display = 'none'; contactError.style.display = 'none';
+        const name = $('#name').value.trim(), email = $('#email').value.trim(), project = $('#project').value.trim(), budget = $('#budget').value;
+        if (!name || !email) { showInline(contactError, 'Please provide your name and email.'); return; }
+        if (!validateEmail(email)) { showInline(contactError, 'Please enter a valid email address.'); return; }
+        const submissions = loadSubmissions();
+        submissions.push({ id: Date.now(), name, email, project, budget, createdAt: new Date().toISOString() });
+        saveSubmissions(submissions); renderSubmissions();
+        showInline(contactSuccess, `Thanks ${escapeHtml(name)}! Your request has been saved locally.`, 5000);
+        contactForm.reset();
+      });
+      resetContact.addEventListener('click', ()=> { contactForm.reset(); contactSuccess.style.display='none'; contactError.style.display='none'; });
+      renderSubmissions();
+
+      /* ---------- Planner (Dynamic To-Do list) ---------- */
+      const TASK_KEY = 'brightline_tasks_v2', taskInput = $('#taskInput'), addTaskBtn = $('#addTaskBtn'), todoList = $('#todoList'), plannerMsg = $('#plannerMsg'), clearCompleted = $('#clearCompleted'), clearAll = $('#clearAll');
+
+      function loadTasks(){ try { return JSON.parse(localStorage.getItem(TASK_KEY)||'[]'); } catch(e){ return []; } }
+      function saveTasks(list){ localStorage.setItem(TASK_KEY, JSON.stringify(list)); }
+      function renderTasks(){
+        const tasks = loadTasks(); todoList.innerHTML = '';
+        if (!tasks.length) { todoList.innerHTML = '<div class="small" style="color:var(--muted)">No tasks yet. Add one above.</div>'; return; }
+        tasks.forEach((t, idx) => {
+          const li = document.createElement('li'); li.className='todo-item' + (t.done? ' done' : ''); li.dataset.idx=idx;
+          const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = !!t.done; cb.addEventListener('change', ()=> toggleTask(idx));
+          const title = document.createElement('div'); title.className='title'; title.textContent = t.text;
+          const actions = document.createElement('div'); actions.className='todo-actions';
+          const removeBtn = document.createElement('button'); removeBtn.className='remove'; removeBtn.type='button'; removeBtn.textContent='Remove'; removeBtn.addEventListener('click', ()=> removeTask(idx));
+          actions.appendChild(removeBtn);
+          li.appendChild(cb); li.appendChild(title); li.appendChild(actions); todoList.appendChild(li);
+        });
+      }
+      function addTask(text){ if (!text || !text.trim()){ showInline(plannerMsg,'Please enter a task.',2000); return;} const tasks=loadTasks(); tasks.push({text:text.trim(), done:false, createdAt:Date.now()}); saveTasks(tasks); renderTasks(); taskInput.value=''; showInline(plannerMsg,'Task added.',1500); }
+      function toggleTask(idx){ const tasks=loadTasks(); if (!tasks[idx]) return; tasks[idx].done = !tasks[idx].done; saveTasks(tasks); renderTasks(); }
+      function removeTask(idx){ const tasks=loadTasks(); tasks.splice(idx,1); saveTasks(tasks); renderTasks(); showInline(plannerMsg,'Task removed.',1600); }
+      addTaskBtn.addEventListener('click', ()=> addTask(taskInput.value));
+      taskInput.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); addTask(taskInput.value); }});
+      clearCompleted.addEventListener('click', () => { let tasks=loadTasks(); tasks = tasks.filter(t=>!t.done); saveTasks(tasks); renderTasks(); showInline(plannerMsg,'Completed tasks cleared.',1800); });
+      clearAll.addEventListener('click', ()=> { if (!confirm('Clear all tasks?')) return; saveTasks([]); renderTasks(); showInline(plannerMsg,'All tasks cleared.',1800); });
+      renderTasks();
+
+      /* ---------- Notes (Task 4) ---------- */
+      const NOTE_KEY = 'brightline_notes_v1', noteTitle = $('#noteTitle'), noteBody = $('#noteBody'), saveNote = $('#saveNote'), clearNote = $('#clearNote'), notesList = $('#notesList'), noteMsg = $('#noteMsg');
+      function loadNotes(){ try { return JSON.parse(localStorage.getItem(NOTE_KEY)||'[]'); } catch(e) { return []; } }
+      function saveNotes(list){ localStorage.setItem(NOTE_KEY, JSON.stringify(list)); }
+      function renderNotes(){
+        const arr = loadNotes(); notesList.innerHTML = '';
+        if (!arr.length){ notesList.innerHTML = '<div class="small" style="color:var(--muted)">No notes yet.</div>'; return; }
+        arr.forEach((n, i) => {
+          const li = document.createElement('li'); li.className='note-item';
+          li.innerHTML = `<div class="note-body"><strong>${escapeHtml(n.title || 'Untitled')}</strong><div class="small" style="color:var(--muted);margin-top:6px">${escapeHtml(n.body)}</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><button class="btn ghost" data-edit="${i}">Edit</button><button class="btn warn" data-remove="${i}">Delete</button></div>`;
+          li.querySelector('[data-edit]').addEventListener('click', ()=> { noteTitle.value = n.title; noteBody.value = n.body; saveNote.dataset.edit = i; });
+          li.querySelector('[data-remove]').addEventListener('click', ()=> { if (!confirm('Delete note?')) return; const a = loadNotes(); a.splice(i,1); saveNotes(a); renderNotes(); showInline(noteMsg,'Note deleted.',1500); });
+          notesList.appendChild(li);
+        });
+      }
+      saveNote.addEventListener('click', ()=> {
+        const t = noteTitle.value.trim(), b = noteBody.value.trim();
+        if (!t && !b) { showInline(noteMsg,'Enter title or body to save.'); return; }
+        const arr = loadNotes();
+        if (saveNote.dataset.edit !== undefined) {
+          const idx = parseInt(saveNote.dataset.edit,10);
+          if (!isNaN(idx) && arr[idx]) { arr[idx].title = t; arr[idx].body = b; delete saveNote.dataset.edit; showInline(noteMsg,'Note updated.',1500); }
+        } else { arr.push({ title: t, body: b, createdAt: Date.now() }); showInline(noteMsg,'Note saved.',1500); }
+        saveNotes(arr); noteTitle.value=''; noteBody.value=''; renderNotes();
+      });
+      clearNote.addEventListener('click', ()=> { noteTitle.value=''; noteBody.value=''; delete saveNote.dataset.edit; });
+      renderNotes();
+
+      /* ---------- Quiz (Interactive, DOM manipulation) ---------- */
+      const quizQuestions = [
+        { q: 'Which tag is used for the main heading in HTML?', choices: ['<main>', '<h1>', '<header>', '<title>'], answer: 1 },
+        { q: 'Which CSS property changes text color?', choices: ['font-color', 'color', 'text-color', 'fg'], answer: 1 },
+        { q: 'Which method fetches data in modern JavaScript?', choices: ['get()', 'ajax()', 'fetch()', 'request()'], answer: 2 },
+        { q: 'Flexbox is primarily used for?', choices: ['2D layout', 'Grid layout', 'Flexible 1D layout', 'Animating elements'], answer: 2 }
+      ];
+      const quizArea = $('#quizArea'), submitQuiz = $('#submitQuiz'), resetQuiz = $('#resetQuiz'), quizResult = $('#quizResult');
+
+      function buildQuiz(){
+        quizArea.innerHTML=''; quizQuestions.forEach((item, idx) => {
+          const wrapper = document.createElement('div'); wrapper.className='question';
+          const qEl = document.createElement('div'); qEl.innerHTML = `<strong>Q${idx+1}.</strong> ${escapeHtml(item.q)}`;
+          const ul = document.createElement('ul'); ul.className='choices';
+          item.choices.forEach((c, i) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<label><input type="radio" name="q${idx}" value="${i}"> ${escapeHtml(c)}</label>`;
+            ul.appendChild(li);
+          });
+          wrapper.appendChild(qEl); wrapper.appendChild(ul); quizArea.appendChild(wrapper);
+        });
+      }
+      function gradeQuiz(){
+        let score = 0, answered = 0;
+        quizQuestions.forEach((item, idx) => {
+          const chosen = quizArea.querySelector(`input[name="q${idx}"]:checked`);
+          if (chosen) { answered++; if (parseInt(chosen.value,10) === item.answer) score++; }
+        });
+        return { score, answered, total: quizQuestions.length };
+      }
+      submitQuiz.addEventListener('click', ()=> {
+        const res = gradeQuiz();
+        if (res.answered < res.total){ showInline(quizResult, `You answered ${res.answered}/${res.total} questions. Please answer all before submitting.`, 4000); return; }
+        showInline(quizResult, `You scored ${res.score}/${res.total} — ${res.score===res.total? 'Great job!': res.score>=Math.ceil(res.total/2)? 'Nice work!' : 'Keep practicing.'}`, 6000);
+      });
+      resetQuiz.addEventListener('click', ()=> { buildQuiz(); quizResult.style.display='none'; });
+      buildQuiz();
+
+      /* ---------- Carousel (Image placeholder slides) ---------- */
+      const slides = $all('.slide'), prevSlide = $('#prevSlide'), nextSlide = $('#nextSlide'), toggleAuto = $('#toggleAuto');
+      let current = 0, autoId = null, autoOn = false;
+      function showSlide(idx){
+        slides.forEach(s => s.classList.remove('active'));
+        current = (idx + slides.length) % slides.length;
+        slides[current].classList.add('active');
+      }
+      prevSlide?.addEventListener('click', ()=> showSlide(current-1));
+      nextSlide?.addEventListener('click', ()=> showSlide(current+1));
+      function startAuto(){ if (autoOn) return; autoOn = true; if(toggleAuto) toggleAuto.textContent='Stop'; if(toggleAuto) toggleAuto.setAttribute('aria-pressed','true'); autoId = setInterval(()=> showSlide(current+1), 3500); }
+      function stopAuto(){ if (!autoOn) return; autoOn = false; if(toggleAuto) toggleAuto.textContent='Start'; if(toggleAuto) toggleAuto.setAttribute('aria-pressed','false'); clearInterval(autoId); autoId = null; }
+      toggleAuto?.addEventListener('click', ()=> { autoOn ? stopAuto() : startAuto(); });
+      $('#slides')?.addEventListener('keydown', (e)=> { if (e.key === 'ArrowLeft') showSlide(current-1); if (e.key === 'ArrowRight') showSlide(current+1); });
+      showSlide(0);
+
+      /* ---------- Fetch from public API (joke) ---------- */
+      const getJoke = $('#getJoke'), clearJoke = $('#clearJoke'), jokeArea = $('#jokeArea');
+      getJoke.addEventListener('click', async () => {
+        jokeArea.textContent = 'Loading joke…';
+        try {
+          const res = await fetch('https://official-joke-api.appspot.com/random_joke');
+          if (!res.ok) throw new Error('Network response not ok');
+          const data = await res.json();
+          jokeArea.innerHTML = `<strong>${escapeHtml(data.setup)}</strong><div style="margin-top:8px;color:var(--muted)">${escapeHtml(data.punchline)}</div>`;
+        } catch (err) {
+          try {
+            const res2 = await fetch('https://api.chucknorris.io/jokes/random');
+            const d2 = await res2.json();
+            jokeArea.innerHTML = `<div style="color:var(--muted)">${escapeHtml(d2.value)}</div>`;
+          } catch (err2) {
+            jokeArea.textContent = 'Could not fetch a joke. Please try again later.';
+          }
+        }
+      });
+      clearJoke.addEventListener('click', ()=> { jokeArea.textContent = 'No joke yet.'; });
+
+      /* ---------- Portfolio Projects (Task 4) ---------- */
+      const projectsData = [
+        { id:'proj-1', title:'Portfolio Website', summary:'Responsive personal portfolio with About/Projects/Contact.', tech:['HTML','CSS','JS'], details:'A multi-section portfolio to showcase projects, contact, and responsive design.' },
+        { id:'proj-2', title:'To-Do App', summary:'Persistent to-do app using localStorage.', tech:['JS','localStorage'], details:'Add, toggle, remove tasks and persist data in localStorage.' },
+        { id:'proj-3', title:'Product Filter', summary:'Filter & sort products by category/price/rating.', tech:['JS','DOM'], details:'Interactive product listing allowing users to filter and sort.' }
+      ];
+      const projectsGrid = $('#projectsGrid'), projectDetail = $('#projectDetail');
+      function renderProjects(){
+        projectsGrid.innerHTML = '';
+        projectsData.forEach(p => {
+          const card = document.createElement('div');
+          card.innerHTML = `<div style="padding:12px;border-radius:8px;border:1px solid rgba(11,122,114,0.06);background:#fff">
+            <h4 style="margin:0">${escapeHtml(p.title)}</h4>
+            <div class="small" style="margin-top:6px">${escapeHtml(p.summary)}</div>
+            <div style="margin-top:8px"><button class="btn" data-id="${p.id}">View</button></div>
+          </div>`;
+          projectsGrid.appendChild(card);
+        });
+        projectsGrid.querySelectorAll('button[data-id]').forEach(btn => {
+          btn.addEventListener('click', ()=> {
+            const id = btn.dataset.id; const p = projectsData.find(x => x.id === id);
+            if (!p) return;
+            projectDetail.style.display = ''; projectDetail.innerHTML = `<h3>${escapeHtml(p.title)}</h3><p class="small">${escapeHtml(p.details)}</p><p style="margin-top:8px"><strong>Tech:</strong> ${p.tech.join(', ')}</p><div style="margin-top:10px"><button class="btn" id="closeProject">Close</button></div>`;
+            $('#closeProject').addEventListener('click', ()=> projectDetail.style.display='none');
+            projectDetail.scrollIntoView({ behavior:'smooth' });
+          });
+        });
+      }
+      renderProjects();
+
+      /* ---------- Product listing (Task 4) ---------- */
+      const sampleProducts = [
+        {id:'prd1',title:'Minimal Lamp',category:'home',price:1200,rating:4.2,desc:'Stylish desk lamp'},
+        {id:'prd2',title:'Wireless Mouse',category:'electronics',price:899,rating:4.5,desc:'Ergonomic mouse'},
+        {id:'prd3',title:'Ceramic Mug',category:'home',price:299,rating:4.0,desc:'Handmade mug'},
+        {id:'prd4',title:'Bluetooth Speaker',category:'electronics',price:2200,rating:4.6,desc:'Portable speaker'},
+        {id:'prd5',title:'Notebook Set',category:'stationery',price:450,rating:4.1,desc:'A5 notebooks'},
+        {id:'prd6',title:'Planner',category:'stationery',price:350,rating:3.9,desc:'Weekly planner'}
+      ];
+      const categorySelect = $('#filterCategory'), productsGrid = $('#productsGrid'), productsCount = $('#productsCount'), filterPrice = $('#filterPrice'), sortBy = $('#sortBy');
+
+      (function populateCategories(){
+        const cats = Array.from(new Set(sampleProducts.map(p=>p.category)));
+        cats.forEach(c => {
+          const opt = document.createElement('option'); opt.value=c; opt.textContent = c[0].toUpperCase() + c.slice(1);
+          categorySelect.appendChild(opt);
+        });
+      })();
+
+      function applyProductFilters(){
+        let list = sampleProducts.slice();
+        const cat = categorySelect.value;
+        const maxPrice = parseFloat(filterPrice.value);
+        if (cat) list = list.filter(p => p.category === cat);
+        if (!isNaN(maxPrice)) list = list.filter(p => p.price <= maxPrice);
+        const s = sortBy.value;
+        if (s === 'price-asc') list.sort((a,b)=>a.price-b.price);
+        if (s === 'price-desc') list.sort((a,b)=>b.price-a.price);
+        if (s === 'rating-desc') list.sort((a,b)=>b.rating-a.rating);
+        renderProducts(list);
+      }
+
+      function renderProducts(list){
+        productsGrid.innerHTML = '';
+        productsCount.textContent = `${list.length} items`;
+        if (!list.length) {
+          productsGrid.innerHTML = '<div class="small" style="color:var(--muted)">No products match your filters.</div>';
+          return;
+        }
+        list.forEach(p => {
+          const div = document.createElement('div'); div.className = 'product';
+          div.innerHTML = `<div style="height:80px;background:linear-gradient(135deg,#10b981,#0891b2);border-radius:8px;display:grid;place-items:center;color:white;font-weight:700">${escapeHtml(p.title)}</div>
+            <div><strong>₹${p.price}</strong> <span class="prod-meta">• ${p.category} • ${p.rating}★</span></div>
+            <div class="small" style="color:var(--muted)">${escapeHtml(p.desc)}</div>
+            <div style="margin-top:8px;display:flex;gap:8px"><button class="btn" data-id="${p.id}">View</button> <button class="btn ghost" data-cart="${p.id}">Add</button></div>`;
+          productsGrid.appendChild(div);
+        });
+        productsGrid.querySelectorAll('button[data-id]').forEach(b => b.addEventListener('click', ()=> {
+          const id = b.dataset.id; const pr = sampleProducts.find(x=>x.id===id);
+          if (pr) { showInline($('#contactSuccess') || document.body, `Product: ${pr.title} — ₹${pr.price}`, 2500); }
+        }));
+        productsGrid.querySelectorAll('button[data-cart]').forEach(b => b.addEventListener('click', ()=> {
+          const id = b.dataset.cart; const pr = sampleProducts.find(x=>x.id===id);
+          if (pr) { showInline($('#plannerMsg') || document.body, `Added "${pr.title}" to cart (demo).`, 2000); }
+        }));
+      }
+
+      $('#applyFilters').addEventListener('click', applyProductFilters);
+      $('#clearFilters').addEventListener('click', ()=> {
+        categorySelect.value = ''; filterPrice.value = ''; sortBy.value = 'none'; applyProductFilters();
+      });
+      applyProductFilters();
+
+      /* ---------- Accessibility & nav smoothing ---------- */
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = a.getAttribute('href').slice(1);
+          const el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+      /* ---------- Small UX: Learn More scroll ---------- */
+      $('#learnMore').addEventListener('click', ()=> { document.getElementById('services').scrollIntoView({behavior:'smooth'}); });
+
+      /* ---------- Small helper: optional confirm wrapper for clear actions ---------- */
+      // (already used confirm() sparingly for destructive actions)
+    })();
+  </script>
+</body>
+</html>
